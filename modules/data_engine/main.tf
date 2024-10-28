@@ -21,7 +21,7 @@ resource "tencentcloud_dlc_data_engine" "data_engine" {
   default_data_engine    = try(var.data_engine.default_data_engine, false) # false
   cidr_block             = try(var.data_engine.cidr_block, "10.255.0.0/16") # "10.255.0.0/16"
   message                = try(var.data_engine.message, "") # "test spark1"
-  time_span              = try(var.data_engine.pay_mode, 0) == 0 ? 3600 : try(var.data_engine.time_span, 1) # (Optional, Int) Engine TimeSpan, prePay: minimum of 1, representing one month of purchasing resources, with a maximum of 120, default 3600, postPay: fixed fee of 3600.
+  time_span              = try(var.data_engine.pay_mode, 0) == 0 ? 1 : try(var.data_engine.time_span, 1) # (Optional, Int) Engine TimeSpan, prePay: minimum of 1, representing one month of purchasing resources, with a maximum of 120, default 3600, postPay: fixed fee of 3600.
   time_unit              = try(var.data_engine.pay_mode, 0) == 0 ? "h" : "m"
 
   crontab_resume_suspend = try(var.data_engine.crontab_resume_suspend, 0) #  (Optional, Int) Engine crontab resume or suspend strategy, only support: 0: Wait(default), 1: Kill.
