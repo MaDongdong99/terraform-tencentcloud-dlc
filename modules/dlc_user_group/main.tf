@@ -10,7 +10,7 @@ locals {
 
 resource "tencentcloud_dlc_user" "users" {
   for_each = var.users
-  user_id          = local.user_uins[each.key]
+  user_id          = try(each.value.user_id, local.user_uins[each.key])
   user_type        = try(each.value.user_type, "COMMON") # "ADMIN"
   user_alias       = each.key
   user_description = try(each.value.user_description, "for terraform test")
@@ -27,6 +27,6 @@ resource "tencentcloud_dlc_add_users_to_work_group_attachment" "add_users_to_wor
   for_each = var.groups
   add_info {
     work_group_id = tencentcloud_dlc_work_group.work_groups[each.key].id
-    user_ids      = [ for user in try(each.value.users, []): local.user_uins[user] ]
+    user_ids      = [ for user in try(each.value.users, []): try(var.users[user].user_id, local.user_uins[user]) ]
   }
 }

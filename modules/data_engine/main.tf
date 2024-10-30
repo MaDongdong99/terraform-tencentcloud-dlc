@@ -7,7 +7,7 @@ resource "tencentcloud_dlc_data_engine" "data_engine" {
   count = var.create_data_engine ? 1 : 0
   engine_type            = try(var.data_engine.engine_type, "spark") # "spark"  Engine type, only support: spark/presto.
   data_engine_name       = try(var.data_engine.data_engine_name, "data_engine") #
-  cluster_type           = try(var.data_engine.cluster_type, "spark_cu") # "spark_cu" "testSpark" Engine cluster type, only support: spark_cu/presto_cu.
+  cluster_type           = try(var.data_engine.engine_type, "spark") == "spark" ? "spark_cu" : "presto_cu" # "spark_cu" "testSpark" Engine cluster type, only support: spark_cu/presto_cu.
   mode                   = try(var.data_engine.mode, 1) # 1 # only support 1: ByAmount, 2: YearlyAndMonthly.
   auto_resume            = try(var.data_engine.auto_resume, true) # false
   auto_suspend           = try(var.data_engine.pay_mode, 0) == 0 ? try(var.data_engine.auto_suspend, false) : null # false
@@ -26,7 +26,7 @@ resource "tencentcloud_dlc_data_engine" "data_engine" {
 
   crontab_resume_suspend = try(var.data_engine.crontab_resume_suspend, 0) #  (Optional, Int) Engine crontab resume or suspend strategy, only support: 0: Wait(default), 1: Kill.
   engine_exec_type       = try(var.data_engine.engine_exec_type, "BATCH") # (Optional, String) Engine exec type, only support SQL(default) or BATCH.
-  resource_type =  try(var.data_engine.resource_type, "Standard_CU") # (Optional, String) Engine resource type not match, only support: Standard_CU/Memory_CU(only BATCH ExecType).
+  resource_type =  try(var.data_engine.engine_exec_type, "BATCH") == "BATCH" ? try(var.data_engine.resource_type, "Standard_CU") : "Standard_CU" # (Optional, String) Engine resource type not match, only support: Standard_CU/Memory_CU(only BATCH ExecType).
 
   dynamic "data_engine_config_pairs" {
     for_each = try(var.data_engine.data_engine_config_pairs, [])
